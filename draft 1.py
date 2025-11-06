@@ -4,6 +4,22 @@ import os
 
 # Get the directory of the current script
 script_dir = os.path.dirname(os.path.abspath(__file__))
+# test
+def read_cm_with_to_csv(classm_or_loc):
+     try:
+          with open(os.path.join(script_dir, "subject_class_mark_table.csv")) as cm:
+               cm2reader= csv.reader(cm)
+               CMlen=len(classm_or_loc)
+               for row in cm2reader:
+                    if classm_or_loc in row[1] and CMlen > 2:
+                        parts = classm_or_loc.split('to')
+                        lowerlimt= str(parts[0].strip())
+                        upperlimt= str(parts[1].strip())
+                        if lowerlimt<= classm_or_loc<= upperlimt:
+                             print(classm_or_loc)
+     except FileNotFoundError:
+          print('File Not Found')
+#test
 # function to read the csv files
 def read_cm_csv(classmark):
     try:
@@ -29,6 +45,8 @@ def read_sub_csv(subject=None, classmark=None, i=0):
                   if subject in row[i]:
                         classmark = row[1]
                         liblocation = read_loc_csv(classmark, CMlen= len(classmark))
+                        #if subject in liblocation[0]:
+                         #    print('liblocation')
                         '''try:
                               print("[Subject, Classmark, Location]: ", row, liblocation[1])
                               return row
@@ -45,14 +63,16 @@ def read_loc_csv(classm_or_loc, CMlen=1, j=0):
             locreader = csv.reader(loc)
             for row in locreader:
                   if j == 0:
-                        invalid = True
-                        if classm_or_loc in row[j] and CMlen == 2:
+                        if classm_or_loc not in row[j]:
+                           print('true')
+                           read_cm_with_to_csv(classm_or_loc)  
+                        elif classm_or_loc in row[j] and CMlen == 2:
                               #print("[Subject, Class Mark]")
                               for newrow in read_cm_csv(classm_or_loc):
                                     print("Location: ", row[1])
                                     invalid =False
                               #print(subjectname)
-                              #return newrow
+                              return newrow
                         elif classm_or_loc in row[j] and CMlen == 1:
                               classmarks= row[0].strip('[]')
                               classmarks= classmarks.split(",")
@@ -63,8 +83,10 @@ def read_loc_csv(classm_or_loc, CMlen=1, j=0):
                                           for newrow in read_cm_csv(classm_or_loc):
                                                 print("Location: ", row[1])
                                                 invalid = False
-                        elif classm_or_loc not in row[j]:
-                              print("Invalid Reference")
+                        elif classm_or_loc in row[j] and CMlen > 2:
+                             read_cm_with_to_csv(classm_or_loc)
+                        #elif classm_or_loc not in row[j]:
+                         #     print("Invalid Reference")
                                     
             
                   elif j ==1:
